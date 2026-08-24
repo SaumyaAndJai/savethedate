@@ -227,7 +227,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0A1520}
 
 /* ===== BUTTERFLIES ===== */
 .bf{position:absolute;pointer-events:none;z-index:10;opacity:0}
-.bf svg{width:100%;height:100%;overflow:visible}
+.bf svg{width:100%;height:100%;overflow:visible;
+        filter:
+drop-shadow(0 0 8px rgba(126,206,198,.45))
+drop-shadow(0 0 16px rgba(160,136,64,.20));
+       }
 .wr,.wl{transform-origin:0 0}
 .wr{animation:flap .8s ease-in-out infinite}
 .wl{animation:flap .8s ease-in-out infinite}
@@ -273,12 +277,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0A1520}
   100%{opacity:0}
 }
 
-.bf-1::after{animation-delay:.2s}.bf-1::before{animation-delay:.5s}
-.bf-2::after{animation-delay:1s}.bf-2::before{animation-delay:1.3s}
-.bf-3::after{animation-delay:.6s}.bf-3::before{animation-delay:.9s}
-.bf-4::after{animation-delay:1.5s}.bf-4::before{animation-delay:1.8s}
-.bf-5::after{animation-delay:.4s}.bf-5::before{animation-delay:.7s}
-.bf-6::after{animation-delay:1.2s}.bf-6::before{animation-delay:1.5s}
+.bf-1{animation:f1 22s cubic-bezier(.42,0,.25,1) infinite;width:110px;height:86px}
+.bf-2{animation:f2 27s cubic-bezier(.42,0,.25,1) 4s infinite;width:82px;height:64px}
+.bf-3{animation:f3 20s cubic-bezier(.42,0,.25,1) 8s infinite;width:130px;height:100px}
+.bf-4{animation:f4 24s cubic-bezier(.42,0,.25,1) 2s infinite;width:96px;height:76px}
+.bf-5{animation:f5 28s cubic-bezier(.42,0,.25,1) 6s infinite;width:86px;height:68px}
+.bf-6{animation:f6 25s cubic-bezier(.42,0,.25,1) 11s infinite;width:72px;height:58px}
 
 @keyframes f1{
   0%{transform:translate(80px,570px) rotate(10deg) scale(.7);opacity:0}
@@ -338,6 +342,41 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0A1520}
 .s3-wrap.revealed .s3-arch{opacity:1;transform:translateY(0)}
 .s3-wrap.revealed .s3-bottom{opacity:1;transform:translateY(0)}
 
+.scroll-indicator{
+  position:absolute;
+  bottom:80px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  z-index:30;
+  color:var(--gold);
+  animation:floatUp 2s ease-in-out infinite;
+}
+  
+@keyframes floatUp{
+  0%,100%{
+    transform:translateX(-50%) translateY(0);
+  }
+  50%{
+    transform:translateX(-50%) translateY(-12px);
+  }
+}
+.scroll-indicator span{
+  font-family:'Cinzel',serif;
+  font-size:28px;
+  letter-spacing:.15em;
+}
+
+.arrow{
+  width:28px;
+  height:28px;
+  border-left:3px solid var(--gold);
+  border-bottom:3px solid var(--gold);
+  transform:rotate(-45deg);
+  margin-top:10px;
+}
 @media(prefers-reduced-motion:reduce){
   .bf,.bf::before,.bf::after{display:none}
   #vid.zooming{transition-duration:.5s}
@@ -424,6 +463,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0A1520}
         </svg>
       </div>
       <p class="s2-quote">Two hearts, one beautiful journey,<br>and a lifetime of togetherness begins.</p>
+      <div class="scroll-indicator">
+        <span>Swipe Up</span>
+        <div class="arrow"></div>
     </div>
   </section>
 
@@ -519,6 +561,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0A1520}
     started=true;
     tapHint.classList.add('hidden');
     vid.currentTime=0;
+    vid.playbackRate = 1.75; // speed up video
     vid.play().catch(function(){});
   }
   vid.addEventListener('canplaythrough',function(){
@@ -602,7 +645,17 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0A1520}
       setTimeout(function(){URL.revokeObjectURL(url)},5000);
     }
   });
+content.addEventListener('scroll',function(){
 
+  var indicator=document.querySelector('.scroll-indicator');
+
+  if(content.scrollTop > 50 && indicator){
+    indicator.style.opacity='0';
+    indicator.style.transition='opacity .5s';
+  }
+
+});
+``
   // Screen 3 entrance animation
   var s3w=document.getElementById('s3w');
   var obs=new IntersectionObserver(function(entries){
